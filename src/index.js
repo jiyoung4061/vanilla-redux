@@ -1,34 +1,38 @@
-import {createStore} from "redux"; 
-//store:나의 data를 넣는곳! state!!(state? 내 application안에서 바뀌는 data들)
-//redux는 createStore라는 함수가 있음
-//action : function부를때 2번째 인수
+import { createStore } from "redux";
 
 const add = document.getElementById("add")
 const minus = document.getElementById("minus")
 const number = document.querySelector("span")
 
-const countModifier=(count=0, action)=>{
+number.innerText = 0;
 
-    if(action.type==="ADD") {
-        return count+1;
-    } else if(action.type==="MINUS") {
-        return count-1;
-    } else {
-        return count
+const ADD = "ADD";
+const MINUS = "MINUS"
+
+
+const countModifier = (count = 0, action) => {
+    switch (action.type) {
+        case ADD:
+            return count + 1;
+        case MINUS:
+            return count - 1;
+        default:
+            return count;
     }
 }
 
 const countStore = createStore(countModifier);
 
-countStore.dispatch({type:"ADD"})
-countStore.dispatch({type:"ADD"})
-countStore.dispatch({type:"ADD"})
-countStore.dispatch({type:"ADD"})
-countStore.dispatch({type:"MINUS"})
+const onChange = () => {
+    number.innerText = countStore.getState();
+}
 
-console.log(countStore.getState());
+countStore.subscribe(onChange)
 
 
-//1. store 만들기(store는 data를 저장하는 곳)
-//2. reducer: data를 수정하는 "함수"
-// modifier,reducer=> data를 바꿔줌, 뭐든지 return 해주는 값이 data값으로 됨
+const handleAdd = () => {
+    countStore.dispatch({ type: ADD })
+}
+
+add.addEventListener("click", handleAdd)
+minus.addEventListener("click", () => countStore.dispatch({ type: MINUS }))
